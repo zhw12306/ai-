@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>小动画</title>
+  <title>小动画 · 预设与变换</title>
   <style>
     * {
       box-sizing: border-box;
@@ -15,21 +15,143 @@
       min-height: 100vh;
       display: grid;
       place-items: center;
+      padding: 24px 16px 80px;
       background: #0f1115;
-      font-family: system-ui, sans-serif;
+      font-family: system-ui, -apple-system, sans-serif;
+      color: #e8eaef;
+    }
+
+    .app {
+      width: min(420px, 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    h1 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: rgba(255, 255, 255, 0.88);
+      text-align: center;
+    }
+
+    .panel {
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: rgba(26, 29, 36, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .panel-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(255, 255, 255, 0.38);
+      margin-bottom: 10px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(0, 0, 0, 0.25);
+      color: rgba(255, 255, 255, 0.82);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .chip:hover {
+      border-color: rgba(124, 92, 255, 0.45);
+      color: #fff;
+    }
+
+    .chip.active {
+      border-color: rgba(124, 92, 255, 0.65);
+      background: linear-gradient(135deg, rgba(124, 92, 255, 0.35), rgba(79, 140, 255, 0.2));
+      color: #fff;
+    }
+
+    .sliders {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 4.5rem 1fr 2.5rem;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    .row input[type="range"] {
+      width: 100%;
+      accent-color: #7c5cff;
+    }
+
+    .row output {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      color: rgba(255, 255, 255, 0.45);
+      font-size: 0.75rem;
+    }
+
+    .viewport-wrap {
+      perspective: 900px;
+    }
+
+    .viewport {
+      --rotY: 0deg;
+      --rotX: 0deg;
+      --sc: 1;
+      transform: rotateX(var(--rotX)) rotateY(var(--rotY)) scale(var(--sc));
+      transform-style: preserve-3d;
+      transition: transform 0.08s ease-out;
+      will-change: transform;
     }
 
     .stage {
+      min-height: 140px;
+      padding: 28px 32px;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #1f232c 0%, #14161d 100%);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.06),
+        0 28px 56px rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .preset {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 84px;
+    }
+
+    .preset.active {
+      display: flex;
+    }
+
+    /* —— 预设 1：均衡条 —— */
+    .bars {
       display: flex;
       gap: 12px;
       align-items: flex-end;
-      height: 80px;
-      padding: 24px 32px;
-      border-radius: 16px;
-      background: linear-gradient(145deg, #1a1d24 0%, #12141a 100%);
-      box-shadow:
-        0 0 0 1px rgba(255, 255, 255, 0.06),
-        0 24px 48px rgba(0, 0, 0, 0.45);
+      height: 72px;
     }
 
     .bar {
@@ -48,9 +170,7 @@
     .bar:nth-child(5) { animation-delay: 0.4s; }
 
     @keyframes bounce {
-      0%,
-      40%,
-      100% {
+      0%, 40%, 100% {
         transform: scaleY(0.35);
         opacity: 0.65;
       }
@@ -60,24 +180,243 @@
       }
     }
 
+    /* —— 预设 2：旋转星环 —— */
+    .orbit {
+      width: 76px;
+      height: 76px;
+      position: relative;
+      animation: orbit-spin 5s linear infinite;
+    }
+
+    .orbit span {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 9px;
+      height: 9px;
+      margin: -4.5px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #a78bfa, #38bdf8);
+      box-shadow: 0 0 10px rgba(124, 92, 255, 0.55);
+    }
+
+    .orbit span:nth-child(1) { transform: rotate(0deg) translateY(-34px); }
+    .orbit span:nth-child(2) { transform: rotate(45deg) translateY(-34px); }
+    .orbit span:nth-child(3) { transform: rotate(90deg) translateY(-34px); }
+    .orbit span:nth-child(4) { transform: rotate(135deg) translateY(-34px); }
+    .orbit span:nth-child(5) { transform: rotate(180deg) translateY(-34px); }
+    .orbit span:nth-child(6) { transform: rotate(225deg) translateY(-34px); }
+    .orbit span:nth-child(7) { transform: rotate(270deg) translateY(-34px); }
+    .orbit span:nth-child(8) { transform: rotate(315deg) translateY(-34px); }
+
+    @keyframes orbit-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* —— 预设 3：液态形变 —— */
+    .blob {
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, #7c5cff, #22d3ee, #4f8cff);
+      background-size: 200% 200%;
+      animation: blob-morph 6s ease-in-out infinite, blob-hue 10s ease infinite;
+    }
+
+    @keyframes blob-morph {
+      0%, 100% {
+        border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
+        transform: rotate(0deg) scale(1);
+      }
+      33% {
+        border-radius: 40% 60% 42% 58% / 52% 42% 58% 48%;
+        transform: rotate(120deg) scale(1.05);
+      }
+      66% {
+        border-radius: 54% 46% 37% 63% / 44% 54% 46% 56%;
+        transform: rotate(240deg) scale(0.95);
+      }
+    }
+
+    @keyframes blob-hue {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    /* —— 预设 4：波浪条 —— */
+    .wave-bars {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+      height: 72px;
+    }
+
+    .wave-bars .w {
+      width: 8px;
+      height: 40px;
+      border-radius: 6px;
+      background: linear-gradient(180deg, #f472b6, #7c5cff);
+      transform-origin: center bottom;
+      animation: wave 1.4s ease-in-out infinite;
+    }
+
+    .wave-bars .w:nth-child(1) { animation-delay: 0s; }
+    .wave-bars .w:nth-child(2) { animation-delay: 0.1s; }
+    .wave-bars .w:nth-child(3) { animation-delay: 0.2s; }
+    .wave-bars .w:nth-child(4) { animation-delay: 0.3s; }
+    .wave-bars .w:nth-child(5) { animation-delay: 0.4s; }
+    .wave-bars .w:nth-child(6) { animation-delay: 0.5s; }
+    .wave-bars .w:nth-child(7) { animation-delay: 0.6s; }
+
+    @keyframes wave {
+      0%, 100% {
+        transform: scaleY(0.25) translateY(6px);
+        opacity: 0.55;
+      }
+      50% {
+        transform: scaleY(1.15) translateY(0);
+        opacity: 1;
+      }
+    }
+
     .hint {
       position: fixed;
-      bottom: 24px;
+      bottom: 16px;
       left: 50%;
       transform: translateX(-50%);
-      color: rgba(255, 255, 255, 0.35);
-      font-size: 13px;
+      color: rgba(255, 255, 255, 0.32);
+      font-size: 12px;
+      text-align: center;
+      max-width: 90vw;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bar,
+      .orbit,
+      .blob,
+      .wave-bars .w {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+
+      .viewport {
+        transition: none;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="stage" aria-label="均衡器式跳动动画">
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
+  <div class="app">
+    <h1>动效示例 · 旋转变换</h1>
+
+    <div class="panel">
+      <div class="panel-label">例子效果</div>
+      <div class="chips" role="tablist" aria-label="选择动画预设">
+        <button type="button" class="chip active" data-preset="bars" role="tab" aria-selected="true">均衡跳动</button>
+        <button type="button" class="chip" data-preset="orbit" role="tab" aria-selected="false">星环旋转</button>
+        <button type="button" class="chip" data-preset="blob" role="tab" aria-selected="false">液态形变</button>
+        <button type="button" class="chip" data-preset="wave" role="tab" aria-selected="false">波浪起伏</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-label">变换（作用在整个预览区）</div>
+      <div class="sliders">
+        <label class="row">
+          <span>水平转</span>
+          <input type="range" id="rotY" min="-180" max="180" value="0" />
+          <output id="outY" for="rotY">0°</output>
+        </label>
+        <label class="row">
+          <span>俯仰</span>
+          <input type="range" id="rotX" min="-55" max="55" value="0" />
+          <output id="outX" for="rotX">0°</output>
+        </label>
+        <label class="row">
+          <span>缩放</span>
+          <input type="range" id="scale" min="50" max="150" value="100" />
+          <output id="outS" for="scale">100%</output>
+        </label>
+      </div>
+    </div>
+
+    <div class="viewport-wrap">
+      <div class="viewport" id="viewport">
+        <div class="stage" aria-live="polite">
+          <div class="preset active" data-preset="bars">
+            <div class="bars" aria-label="均衡器式跳动">
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+            </div>
+          </div>
+          <div class="preset" data-preset="orbit">
+            <div class="orbit" aria-label="旋转星环">
+              <span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+          <div class="preset" data-preset="blob">
+            <div class="blob" aria-label="液态渐变形变"></div>
+          </div>
+          <div class="preset" data-preset="wave">
+            <div class="wave-bars" aria-label="波浪条">
+              <span class="w"></span>
+              <span class="w"></span>
+              <span class="w"></span>
+              <span class="w"></span>
+              <span class="w"></span>
+              <span class="w"></span>
+              <span class="w"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <p class="hint">双击本文件或在浏览器中打开即可预览</p>
+
+  <p class="hint">拖动滑块即可旋转、倾斜、缩放整块预览；上方切换不同形态例子。</p>
+
+  <script>
+    (function () {
+      var viewport = document.getElementById("viewport");
+      var chips = document.querySelectorAll(".chip");
+      var presets = document.querySelectorAll(".preset");
+      var rotY = document.getElementById("rotY");
+      var rotX = document.getElementById("rotX");
+      var scale = document.getElementById("scale");
+      var outY = document.getElementById("outY");
+      var outX = document.getElementById("outX");
+      var outS = document.getElementById("outS");
+
+      chips.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var id = btn.getAttribute("data-preset");
+          chips.forEach(function (b) {
+            var on = b === btn;
+            b.classList.toggle("active", on);
+            b.setAttribute("aria-selected", on ? "true" : "false");
+          });
+          presets.forEach(function (p) {
+            p.classList.toggle("active", p.getAttribute("data-preset") === id);
+          });
+        });
+      });
+
+      rotY.addEventListener("input", function () {
+        viewport.style.setProperty("--rotY", rotY.value + "deg");
+        outY.textContent = rotY.value + "°";
+      });
+      rotX.addEventListener("input", function () {
+        viewport.style.setProperty("--rotX", rotX.value + "deg");
+        outX.textContent = rotX.value + "°";
+      });
+      scale.addEventListener("input", function () {
+        viewport.style.setProperty("--sc", String(Number(scale.value) / 100));
+        outS.textContent = scale.value + "%";
+      });
+    })();
+  </script>
 </body>
 </html>
