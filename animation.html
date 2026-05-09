@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>小动画</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #0f1115;
+      font-family: system-ui, sans-serif;
+    }
+
+    .stage {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+      height: 80px;
+      padding: 24px 32px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, #1a1d24 0%, #12141a 100%);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.06),
+        0 24px 48px rgba(0, 0, 0, 0.45);
+    }
+
+    .bar {
+      width: 10px;
+      height: 24px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #7c5cff 0%, #4f8cff 100%);
+      transform-origin: center bottom;
+      animation: bounce 1.2s ease-in-out infinite;
+    }
+
+    .bar:nth-child(1) { animation-delay: 0s; }
+    .bar:nth-child(2) { animation-delay: 0.1s; }
+    .bar:nth-child(3) { animation-delay: 0.2s; }
+    .bar:nth-child(4) { animation-delay: 0.3s; }
+    .bar:nth-child(5) { animation-delay: 0.4s; }
+
+    @keyframes bounce {
+      0%,
+      40%,
+      100% {
+        transform: scaleY(0.35);
+        opacity: 0.65;
+      }
+      20% {
+        transform: scaleY(1);
+        opacity: 1;
+      }
+    }
+
+    .hint {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255, 255, 255, 0.35);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="stage" aria-label="均衡器式跳动动画">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </div>
+  <p class="hint">双击本文件或在浏览器中打开即可预览</p>
+</body>
+</html>
